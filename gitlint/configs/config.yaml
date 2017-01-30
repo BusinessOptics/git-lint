@@ -17,6 +17,14 @@
 # braces, as in '{{}}' or '{{foo}}'. See the pylint configuration for an
 # example.
 
+# Ignored paths
+# You can use this system to ignore paths from the linting. This can be useful 
+# when a frame work automatically generates files that do not pass you linting.
+# Uncomment to activate. The file paths use glob syntax.
+
+#ignore:
+#  - */migrations/*.py
+
 # CSS
 # Sample output:
 # /home/skreft/opensource/git-lint/test/e2etest/data/csslint/error.css: line 3, col 2, Warning - Duplicate property 'width' found.

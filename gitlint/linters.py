@@ -141,6 +141,11 @@ def parse_yaml_config(yaml_config, repo_home):
     }
 
     for name, data in yaml_config.items():
+
+        #Skip the ignore path settings
+        if name == "ignore":
+            continue
+
         command = _replace_variables([data['command']], variables)[0]
         requirements = _replace_variables(data.get('requirements', []),
                                           variables)

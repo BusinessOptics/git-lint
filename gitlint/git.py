@@ -82,8 +82,8 @@ def modified_files(root, tracked_only=False, commit=None):
         r'(?P<mode>%s) (?P<filename>.+)' % modes_str,
         groups=('filename', 'mode'))
 
-    return dict((os.path.join(root, _remove_filename_quotes(filename)), mode)
-                for filename, mode in modified_file_status)
+    return {os.path.join(root, _remove_filename_quotes(filename)): mode
+            for filename, mode in modified_file_status}
 
 
 def _modified_files_with_commit(root, commit):

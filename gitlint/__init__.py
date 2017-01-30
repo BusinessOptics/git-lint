@@ -44,6 +44,7 @@ import json
 import os
 import os.path
 import sys
+from fnmatch import fnmatch
 
 import docopt
 import termcolor
@@ -104,7 +105,7 @@ def get_config(repo_root):
         else:
             yaml_config = yaml.load(content)
 
-    return linters.parse_yaml_config(yaml_config, repo_root)
+    return linters.parse_yaml_config(yaml_config, repo_root), yaml_config.get("ignore", [])
 
 
 def format_comment(comment_data):
@@ -115,7 +116,7 @@ def format_comment(comment_data):
 
     'line {line}, col {column}: {severity}: [{message_id}]: {message}'
 
-    Any of the fields may nbe absent.
+    Any of the fields may be absent.
 
     Args:
       comment_data: dictionary with the linter data.
@@ -214,8 +215,13 @@ def main(argv, stdout=sys.stdout, stderr=sys.stderr):
 
     linter_not_found = False
     files_with_problems = 0
-    gitlint_config = get_config(repository_root)
+    gitlint_config, ignore_patterns = get_config(repository_root)
     json_result = {}
+
+    # Filter out ignored files
+    for pattern in ignore_patterns:
+        modified_files = {filename: mode for filename, mode in modified_files.items()
+                          if not fnmatch(filename, pattern)}
 
     for filename in sorted(modified_files.keys()):
         rel_filename = os.path.relpath(filename)
