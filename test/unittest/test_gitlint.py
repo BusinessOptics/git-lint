@@ -31,7 +31,7 @@ class GitLintTest(unittest.TestCase):
     def setUpClass(cls):
         cls._stderr = sys.stderr
         sys.stderr = sys.stdout
-        cls.git_lint_config = gitlint.get_config(None)
+        cls.git_lint_config = gitlint.get_config(None)[0]
 
     @classmethod
     def tearDownClass(cls):
@@ -493,20 +493,20 @@ class GitLintTest(unittest.TestCase):
             mock.patch('gitlint.open',
                        mock.mock_open(read_data=config),
                        create=True) as mock_open:
-            parsed_config = gitlint.get_config(self.root)
+            parsed_config = gitlint.get_config(self.root)[0]
             mock_open.assert_called_once_with(git_config)
             self.assertEqual(['.py'], list(parsed_config.keys()))
             self.assertEqual(1, len(parsed_config['.py']))
 
     def test_get_config_from_default(self):
         with mock.patch('os.path.exists', return_value=False):
-            parsed_config = gitlint.get_config(self.root)
+            parsed_config = gitlint.get_config(self.root)[0]
             self.assertEquals(self.git_lint_config, parsed_config)
 
     def test_get_config_not_in_a_repo(self):
         # When not in a repo should return the default config.
         self.git_repository_root.return_value = None
-        parsed_config = gitlint.get_config(None)
+        parsed_config = gitlint.get_config(None)[0]
         self.assertEquals(self.git_lint_config, parsed_config)
 
     def test_get_config_empty(self):
@@ -515,7 +515,7 @@ class GitLintTest(unittest.TestCase):
             mock.patch('gitlint.open',
                        mock.mock_open(read_data=''),
                        create=True) as mock_open:
-            parsed_config = gitlint.get_config(self.root)
+            parsed_config = gitlint.get_config(self.root)[0]
             self.assertEqual({}, parsed_config)
 
     def test_format_comment(self):
